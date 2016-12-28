@@ -1,1 +1,2 @@
 slackbot==0.4.1
+Flask==0.12
