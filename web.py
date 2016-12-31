@@ -9,7 +9,7 @@ def index():
 
 @app.route('/temp')
 def file():
-    return str(read_device_file()[1])
+    return str(read_device_file())
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
