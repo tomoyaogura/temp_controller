@@ -21,6 +21,6 @@ def read_device_file():
         lines = f.readlines()
         f.close()
 	index = lines[1].find('t=')
-        return float(lines[1][index+2:])/1000
+        return round(float(lines[1][index+2:])/1000, 1)
     else:
         return random.randint(20,32)
