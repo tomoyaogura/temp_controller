@@ -1,6 +1,7 @@
 import time
 import threading
 import re
+import sound_player
 
 from slackbot.bot import Bot, respond_to, default_reply
 from temp_reader import read_device_file
@@ -21,7 +22,7 @@ def set_temp(message, target_temp):
     while (read_device_file() < float(target_temp)):
 	time.sleep(2)
     message.reply("The temparature reached to {} degrees".format(read_device_file()))
-
+    sound_player.play_random_music()
 
 @default_reply
 def my_default_handler(message):
