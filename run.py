@@ -24,9 +24,13 @@ def set_temp(message, target_temp):
     message.reply("The temparature reached to {} degrees".format(read_device_file()))
     sound_player.play_random_music()
 
+@respond_to("play (\d+)", re.IGNORECASE)
+def sound_play(message, mp3_id):
+    sound_player.play_id_music(mp3_id)
+
 @default_reply
 def my_default_handler(message):
-    message.reply('"Temp" returns current temparature and "Set XX" set the target temparature for notification')
+    message.reply('"Temp" returns current temparature\n"Set XX" sets the target temparature for notification\n"Play XX" plays sound')
 
 
 def check_temp():
