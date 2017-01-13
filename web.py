@@ -11,7 +11,7 @@ app = Flask(__name__)
 bath_temperature = [{'time': 'N/A', 'temp': 0.0}] * 15
 
 def update_data():
-    threading.Timer(10.0, update_data).start()
+    threading.Timer(60.0, update_data).start()
     bath_temperature.pop(0)
     bath_temperature.append({'time': time.strftime('%H:%M:%S'),
                              'temp': read_device_file()})
@@ -36,10 +36,11 @@ def graph():
                 <title>%s</title>
             </head>
             <body>
+                Current Temperature is %s<br>
                 %s
             </body>
         </html>
-        """ % (title, bar_chart.render())
+        """ % (title, str(read_device_file()), bar_chart.render())
     return html
 
 if __name__ == '__main__':
