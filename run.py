@@ -12,7 +12,7 @@ from Remote_Outlet.control import turn_on, turn_off
 
 
 measurement_interval = 5
-outlet_number = "304-2"
+outlet_number = 1
 target_temp = 0.0
 
 @respond_to("hi", re.IGNORECASE)
