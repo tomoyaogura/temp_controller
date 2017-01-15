@@ -10,6 +10,7 @@ from temp_reader import read_device_file
 from camera_control import camera_capture
 from Remote_Outlet.control import turn_on, turn_off
 
+set_flag = False
 
 measurement_interval = 10
 motor_outlet_number = "2"
@@ -24,27 +25,34 @@ def return_temp(message):
     message.reply('Temperature is {} degrees'.format(read_device_file()))
 
 @respond_to("set (\d+\.?\d*)", re.IGNORECASE)
-def set_temp(message, target_temp): 
-    message.reply("O.K., I'll let you know when the temparature reaches to {} degrees".format(target_temp))
-    motor_on = False
-    while (read_device_file() < float(target_temp)):
-        time.sleep(measurement_interval)
-        if(motor_on):
-            turn_off(motor_outlet_number)
-        else:
-            turn_on(motor_outlet_number)
-        motor_on = not motor_on
-    message.reply("The temparature reached to {} degrees".format(read_device_file()))
-    sound_player.play_id_music("1")
-    turn_off(motor_outlet_number)
+def set_temp(message, set_temp): 
+    global set_flag
+    target_temp = set_temp
+    if(set_flag):
+        message.reply("Now target temparature is set to {} degrees".format(set_temp))
+    else:
+        set_flag = True
+        message.reply("O.K., I'll let you know when the temparature reaches to {} degrees".format(target_temp))
+        motor_on = False
+        while (read_device_file() < float(target_temp)):
+            time.sleep(measurement_interval)
+            if(motor_on):
+                turn_off(motor_outlet_number)
+            else:
+                turn_on(motor_outlet_number)
+            motor_on = not motor_on
+        message.reply("The temparature reached to {} degrees".format(target_temp))
+        set_flag = False
+        sound_player.play_bath_sound()
+        turn_off(motor_outlet_number)
 
 @respond_to("play (\d+)", re.IGNORECASE)
 def sound_play(message, mp3_id):
-    message.reply(sound_player.play_id_music(mp3_id))
+    message.reply(sound_player.play_id_sound(mp3_id))
 
 @respond_to("list", re.IGNORECASE)
 def print_list(message):
-    message.reply(sound_player.list_music())
+    message.reply(sound_player.list_sound())
 
 @respond_to("on (\d+)", re.IGNORECASE)
 def outlet_on(message, switch_id):

@@ -20,7 +20,7 @@ def play_bath_sound():
     pygame.mixer.music.load(file)
     pygame.mixer.music.play()
 
-def play_id_music(id):
+def play_id_sound(id):
     # Plays a specific music given ID sound_<ID>.mp3 from mp3 subdirectory 
     file = 'sound_{}.mp3'.format(id)
     if not isfile(join(mp3_dir, file)):
@@ -29,7 +29,7 @@ def play_id_music(id):
     pygame.mixer.music.play()
     return "Play {}".format(file)
 
-def list_music():
+def list_sound():
     file = open(join(mp3_dir, list_txt))
     text = file.read()
     file.close()
