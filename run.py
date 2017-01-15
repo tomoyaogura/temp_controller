@@ -11,6 +11,7 @@ from camera_control import camera_capture
 from Remote_Outlet.control import turn_on, turn_off
 
 set_flag = False
+command_help_file = 'command.txt'
 
 measurement_interval = 10
 motor_outlet_number = "2"
@@ -27,6 +28,8 @@ def return_temp(message):
 @respond_to("set (\d+\.?\d*)", re.IGNORECASE)
 def set_temp(message, set_temp): 
     global set_flag
+    global target_temp
+    
     target_temp = set_temp
     if(set_flag):
         message.reply("Now target temparature is set to {} degrees".format(set_temp))
@@ -56,11 +59,11 @@ def print_list(message):
 
 @respond_to("on (\d+)", re.IGNORECASE)
 def outlet_on(message, switch_id):
-    turn_on(switch_id)
+    message.reply(turn_on(switch_id))
 
 @respond_to("off (\d+)", re.IGNORECASE)
 def outlet_off(message, switch_id):
-    turn_off(switch_id)
+    message.reply(turn_off(switch_id))
 
 @respond_to("view", re.IGNORECASE)
 def return_capture(message):
@@ -69,15 +72,10 @@ def return_capture(message):
 
 @default_reply
 def my_default_handler(message):
-    message.reply('"Temp" returns current temparature\n"Set XX" sets the target temparature for notification\n"Play X" plays sound number X\n"List" shows sound list\n"On X & Off X turns on/off outlet number X\n')
-
-
-"""def check_temp():
-    threading.Timer(10.0, check_temp).start()
-    if(read_device_file() >= target_temp):
-	threading.end()
-	message.reply('Reached to the target temparature')
-"""
+    file = open(command_help_file)
+    text = file.read()
+    file.close()
+    message.reply(text)
 
 def main():
     bot = Bot()

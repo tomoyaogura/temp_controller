@@ -1,0 +1,7 @@
+"Temp" returns current temparature
+"Set XX" sets the target temparature for notification
+"Play X" plays sound number X
+"List" shows sound list
+"On X" & "Off X" turns on/off outlet number X
+"View" shows camera image
+"Monitor" monitors home security
