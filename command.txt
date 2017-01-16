@@ -4,4 +4,4 @@
 "List" shows sound list
 "On X" & "Off X" turns on/off outlet number X
 "View" shows camera image
-"Monitor" monitors home security
+"Monitor XX" monitors home security in XX minutes interval, 0 to cancel
