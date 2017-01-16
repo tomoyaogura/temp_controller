@@ -15,6 +15,8 @@ set_flag = False                # When set command is checking temparature, it's
 
 command_help_file = 'command.txt'
 
+measurement_interval = 10       # Measurement interval for set command
+
 monitor_interval = 60           # Keeps interval minutes for monitoring home
 innermost_loop_count = 22       # Innnermost 22 loops for about 1 minutes 
 motor_outlet_number = "2"       # Water pomp outlet number for bathtub circulation
