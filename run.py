@@ -18,10 +18,9 @@ command_help_file = 'command.txt'
 measurement_interval = 5        # Temparature Measurement interval (seconds) for set command
 
 monitor_interval = 60           # Keeps interval minutes for monitoring home
-innermost_loop_count = 22       # Innnermost 22 loops for about 1 minutes 
 motor_outlet_number = "2"       # Water pomp outlet number for bathtub circulation
 target_temp = 0.0               # Keeps the target temparature for bathtub
-fire_warning = 80               # Threshold to judge fire when monitoring home
+fire_warning = 70               # Threshold to judge fire when monitoring home
 
 fire_alarm = "119"              # Sound number for fire alarm
 
@@ -79,7 +78,7 @@ def set_temp(message, set_temp):
 ##                        print "Average updated: ", sample_count, increment, average_increment
                     previous_temp = current_temp
                     sample_count += 1
-                if average_increment > 0:                           # eastimete finish if average increase exists
+                if average_increment > 0:            # eastimete finish if average increase is positive
                     finish_in_minutes = (float(target_temp) - current_temp) / average_increment
 ##                    print target_temp, current_temp, average_increment, finish_in_minutes
                     if finish_in_minutes < 5.0:
@@ -137,37 +136,36 @@ def monitor_home(message, interval):
         if(monitor_interval > 0):
             # Monitoring start
             monitor_flag = True
-            while True:
+            while True:         # Loop infinitely until monitoring is cancelled
                 capture = True
-                minutes = 0
-                while True:
-                    for i in range(1, innermost_loop_count):   # This loop would takle about 1 minutes
-                        if(new_interval):
+                previous_time = time.time()
+                while True:     # Loop for monitor interval
+                    if(new_interval):
                         # New interval time is set
-                            if(monitor_interval == 0):
-                                # 0 -> Cancel monitoring
-                                monitor_flag = False
-                                break
+                        if(monitor_interval == 0):
+                            # 0 -> Cancel monitoring
+                            monitor_flag = False
+                            break
                         # Non 0 -> continue monitoring with new interval time
-                            else:
-                                new_interval = False
-                                capture = True  # forse to capture when interval is changed
-                                i = 1           # Reset counter
-                                message.reply("Monitoring interval is set to {} minutes".format(monitor_interval))
-                        if(read_device_file() > fire_warning):
-                            message.reply("#### EMERGENCY EMERGENCY TEMPARATURE REACHED {} ####".format(fire_warning))
-                            sound_player.play_id_sound(fire_alarm)
-                            capture = True  # forse to capture in case of fire
-                        if(capture):
-                            capture = False
-                            fpath = camera_capture()
-                            message.channel.upload_file(fpath, fpath)
-                        time.sleep(2)
-                    if(not monitor_flag):
-                        break
-                    minutes += 1
-                    if(minutes >= monitor_interval):
-                        break
+                        else:
+                            new_interval = False
+                            capture = True      # forse to capture when interval is changed
+                            previous_time = time.time()        # Timer reset
+                            message.reply("Monitoring interval is set to {} minutes".format(monitor_interval))
+                    current_temp = read_device_file()
+                    if current_temp > fire_warning:
+                        message.reply("#### EMERGENCY EMERGENCY TEMPARATURE REACHED {} ####".format(fire_warning))
+                        sound_player.play_id_sound(fire_alarm)
+                        capture = True  # forse to capture in case of fire
+                    if(capture):
+                        capture = False
+                        fpath = camera_capture()
+                        message.channel.upload_file("{}".format(current_temp), fpath)
+                    time.sleep(2)       # check Monitor command interval change every 2 seconds
+                    current_time = time.time()
+                    if int(current_time - previous_time) >= monitor_interval * 60:
+                        capture = True
+                        previous_time = current_time
                 if(not monitor_flag):
                     break
             message.reply("Monitoring cancelled")
