@@ -15,7 +15,7 @@ set_flag = False                # When set command is checking temparature, it's
 
 command_help_file = 'command.txt'
 
-measurement_interval = 10       # Measurement interval for set command
+measurement_interval = 5        # Temparature Measurement interval (seconds) for set command
 
 monitor_interval = 60           # Keeps interval minutes for monitoring home
 innermost_loop_count = 22       # Innnermost 22 loops for about 1 minutes 
@@ -24,6 +24,11 @@ target_temp = 0.0               # Keeps the target temparature for bathtub
 fire_warning = 80               # Threshold to judge fire when monitoring home
 
 fire_alarm = "119"              # Sound number for fire alarm
+
+estimate_message_sent = [False, False, False, False]
+estimate_message_sound = ["900", "901", "902", "903"]
+estimate_message_minutes = ["5", "10", "15", "20"]
+skip_first_message = True       # First estimation message could be unrelyable
 
 @respond_to("hi", re.IGNORECASE)
 def hi(message):
@@ -37,22 +42,63 @@ def return_temp(message):
 def set_temp(message, set_temp): 
     global set_flag
     global target_temp
+    global skip_first_message
     
+    estimation_started = False
     target_temp = set_temp
     if(set_flag):
         message.reply("Now target temparature is set to {} degrees".format(set_temp))
     else:
+        finish_in_minutes = 0.0             # estimate remaining time in minutes
+        previous_temp = 0.0
+        current_temp = 0.0
+        increment = 0.0
+        sample_count = 0                    # number of sample for the avarage
+        average_increment = 0.0             # avarage increment for 1 minute
         set_flag = True
         message.reply("O.K., I'll let you know when the temparature reaches to {} degrees".format(target_temp))
         motor_on = False
-        while (read_device_file() < float(target_temp)):
+        previous_time = time.time()        # record set start time
+        while True:
+            current_temp = read_device_file()
+            if current_temp > float(target_temp):
+                break
             time.sleep(measurement_interval)
-            if(motor_on):
+            if motor_on:
                 turn_off(motor_outlet_number)
             else:
                 turn_on(motor_outlet_number)
             motor_on = not motor_on
-        message.reply("The temparature reached to {} degrees".format(target_temp))
+            current_time = time.time()
+            if estimation_started:                                  # estimation started
+                if int(current_time - previous_time) >= 120:                                # update avarage increase every 2 minutes
+                    previous_time = current_time
+                    if sample_count >= 1:                               # can calculate increment
+                        increment = (current_temp - previous_temp) /2   # increment for 1 minute
+                        average_increment = (average_increment * (sample_count - 1) + increment )/sample_count
+##                        print "Average updated: ", sample_count, increment, average_increment
+                    previous_temp = current_temp
+                    sample_count += 1
+                if average_increment > 0:                           # eastimete finish if average increase exists
+                    finish_in_minutes = (float(target_temp) - current_temp) / average_increment
+##                    print target_temp, current_temp, average_increment, finish_in_minutes
+                    if finish_in_minutes < 5.0:
+                      estimate_message(0, message)
+                    elif finish_in_minutes < 10.0:
+                        estimate_message(1, message)
+                    elif finish_in_minutes < 15.0:
+                        estimate_message(2, message)
+                    elif finish_in_minutes < 20.0:
+                        estimate_message(3, message)
+                    else:
+                        skip_first_message = False
+            else:
+                if int(current_time - previous_time) >= 300:         # Wait for 5 minutes increase to be stable
+                    estimation_started = True
+##                    print "Estimation start"
+                    previous_time = current_time
+        message.reply("{} The temparature reached to {} degrees".format(time.strftime(
+        '%H:%M'), target_temp))
         set_flag = False
         sound_player.play_bath_sound()
         turn_off(motor_outlet_number)
@@ -134,6 +180,17 @@ def my_default_handler(message):
     text = file.read()
     file.close()
     message.reply(text)
+
+def estimate_message(id, message):
+    global skip_first_message
+
+    if(not estimate_message_sent[id]):
+        estimate_message_sent[id] = True
+        if not skip_first_message:
+            message.reply("{} Estimate {} minutes".format(time.strftime('%H:%M'), estimate_message_minutes[id]))
+            sound_player.play_id_sound(estimate_message_sound[id])
+        else:
+            skip_first_message = False
 
 def main():
     bot = Bot()
