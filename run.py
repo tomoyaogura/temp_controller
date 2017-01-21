@@ -69,35 +69,35 @@ def set_temp(message, set_temp):
                 turn_on(motor_outlet_number)
             motor_on = not motor_on
             current_time = time.time()
-            if estimation_started:                                  # estimation started
-                if int(current_time - previous_time) >= 120:                                # update avarage increase every 2 minutes
+            if estimation_started:                                      # estimation started
+                if int(current_time - previous_time) >= 120:            # update avarage increase every 2 minutes
                     previous_time = current_time
                     if sample_count >= 1:                               # can calculate increment
-                        increment = (current_temp - previous_temp) /2   # increment for 1 minute
+                        increment = (current_temp - previous_temp) / 2  # increment for 1 minute
                         average_increment = (average_increment * (sample_count - 1) + increment )/sample_count
-##                        print "Average updated: ", sample_count, increment, average_increment
+                        print "Average updated: ", sample_count, increment, average_increment
                     previous_temp = current_temp
                     sample_count += 1
-                if average_increment > 0:            # eastimete finish if average increase is positive
+                if average_increment > 0:            # eastimete if average increase is positive
                     finish_in_minutes = (float(target_temp) - current_temp) / average_increment
-##                    print target_temp, current_temp, average_increment, finish_in_minutes
+                    print target_temp, current_temp, average_increment, finish_in_minutes
                     if finish_in_minutes < 5.0:
-                      estimate_message(0, message)
+                      estimate_message(0, current_temp, message)
                     elif finish_in_minutes < 10.0:
-                        estimate_message(1, message)
+                        estimate_message(1, current_temp, message)
                     elif finish_in_minutes < 15.0:
-                        estimate_message(2, message)
+                        estimate_message(2, current_temp, message)
                     elif finish_in_minutes < 20.0:
-                        estimate_message(3, message)
+                        estimate_message(3, current_temp, message)
                     else:
                         skip_first_message = False
             else:
-                if int(current_time - previous_time) >= 300:         # Wait for 5 minutes increase to be stable
+                if int(current_time - previous_time) >= 60:         # Wait for 1 minutes for temparature becomes even
                     estimation_started = True
-##                    print "Estimation start"
+                    print "Estimation start"
                     previous_time = current_time
-        message.reply("{} The temparature reached to {} degrees".format(time.strftime(
-        '%H:%M'), target_temp))
+        message.reply("[{}] The temparature reached to {} degrees".format(time.strftime(
+        '%H:%M:%S'), target_temp))
         set_flag = False
         sound_player.play_bath_sound()
         turn_off(motor_outlet_number)
@@ -179,13 +179,13 @@ def my_default_handler(message):
     file.close()
     message.reply(text)
 
-def estimate_message(id, message):
+def estimate_message(id, temp, message):
     global skip_first_message
 
     if(not estimate_message_sent[id]):
         estimate_message_sent[id] = True
         if not skip_first_message:
-            message.reply("{} Estimate {} minutes".format(time.strftime('%H:%M'), estimate_message_minutes[id]))
+            message.reply("[{}] {} degrees - {} more minutes".format(time.strftime('%H:%M:%S'), temp, estimate_message_minutes[id]))
             sound_player.play_id_sound(estimate_message_sound[id])
         else:
             skip_first_message = False
