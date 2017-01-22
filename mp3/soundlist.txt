@@ -1,0 +1,11 @@
+1: Good morning
+2: Good night
+3: Have a nice day (Iytterassyai)
+4: Haw was your day? (Okaeri)
+5: Have a good reat (Otukare sama)
+6: Returning soon
+7: Little late
+8: Start eating without waiting for me
+110: Theft alarm
+119: Fire alarm
+0: Jkjk
