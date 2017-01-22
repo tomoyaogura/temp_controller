@@ -2,6 +2,7 @@
 "Set XX" sets the target temparature for notification
 "Play X" plays sound number X
 "List" shows sound list
+"Lang (E or J)" sets language preference for sound messages
 "On X" & "Off X" turns on/off outlet number X
 "View" shows camera image
 "Monitor XX" monitors home security in XX minutes interval, 0 to cancel

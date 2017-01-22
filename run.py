@@ -25,9 +25,10 @@ heater_2_outlet_number = "5"
 
 
 fire_alarm = "119"              # Sound number for fire alarm
+theft_alarm = "110"             # Sound number for theft alarm
 
 estimate_message_sent = [False, False, False, False]
-estimate_message_sound = ["900", "901", "902", "903"]
+estimate_message_sound = ["800", "801", "802", "803"]
 estimate_message_minutes = ["5", "10", "15", "20"]
 skip_first_message = True       # First estimation message could be unrelyable
 
@@ -96,6 +97,10 @@ def set_temp(message, set_temp):
 @respond_to("play (\d+)", re.IGNORECASE)
 def sound_play(message, mp3_id):
     message.reply(sound_player.play_id_sound(mp3_id))
+
+@respond_to("lang ([EeJj])", re.IGNORECASE)
+def language_set(message, lang):
+    message.reply(sound_player.sound_language_preference(lang))
 
 @respond_to("list", re.IGNORECASE)
 def print_list(message):

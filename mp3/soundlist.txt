@@ -1,8 +1,0 @@
-1-4: Bath sounds 
-5: Returning home soon
-6: I'll be a little late
-7: Eat without waiting for me
-8: Good Night
-110: Theft warning
-119: Fire alarm
-0: jkjk
