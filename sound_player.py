@@ -2,6 +2,12 @@ from os import listdir
 from os.path import isfile, join
 import pygame
 import random
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(10, GPIO.OUT)
 
 mp3_dir = 'mp3'
 first_choice = 'mp3/j'
@@ -21,7 +27,12 @@ def play_bath_sound():
     files = [join(mp3_dir, f) for f in listdir(mp3_dir) if isfile(join(mp3_dir, f)) and f.endswith('mp3') and f in bath_songs]
     file = random.choice(files)
     pygame.mixer.music.load(file)
+    
+    GPIO.output(10, 1)
     pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        time.sleep(0.5)
+    GPIO.output(10, 0)
 
 def play_id_sound(id):
     global first_choice
@@ -39,7 +50,11 @@ def play_id_sound(id):
     else:
         target_folder = first_choice
     pygame.mixer.music.load(join(target_folder,file))
+    GPIO.output(10, 1)
     pygame.mixer.music.play()
+    while(pygame.mixer.music.get_busy()):
+        time.sleep(0.5)
+    GPIO.output(10, 0)
     return "Play {}".format(file)
 
 def sound_language_preference(Language):
