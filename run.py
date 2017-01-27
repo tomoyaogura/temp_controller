@@ -57,7 +57,7 @@ def set_temp(message, set_temp):
         message.reply("O.K., I'll let you know when the temparature reaches to {} degrees".format(target_temp))
         previous_time = time.time()
         current_temp = read_device_file()
-        if target-temp - current_temp < 8:      # Less than 30 minutes expected -> Short average period
+        if int(target_temp) - int(current_temp) < 8:      # Less than 30 minutes expected -> Short average period
             average_period = 5
         else:
             average_period - 10
