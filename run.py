@@ -52,15 +52,15 @@ def set_temp(message, set_temp):
         message.reply("Now target temparature is set to {} degrees".format(set_temp))
     else:
         finish_in_minutes = 0.0             # estimate remaining time in minutes
-        average_increment = 0.0             # avarage increment for 1 minute
+        average = 0.0                       # avarage increment for 1 minute
         set_flag = True
         message.reply("O.K., I'll let you know when the temparature reaches to {} degrees".format(target_temp))
         previous_time = time.time()
         current_temp = read_device_file()
-        if int(target_temp) - int(current_temp) < 8:      # Less than 30 minutes expected -> Short average period
+        if int(target_temp) - int(current_temp) < 15:      # Less than 30 minutes expected -> Short average period
             average_period = 5
         else:
-            average_period - 10
+            average_period = 10
         while True:
             previous_temp = current_temp
             time.sleep(measurement_interval)
@@ -69,9 +69,11 @@ def set_temp(message, set_temp):
             if current_temp > float(target_temp):
                 break
             if not estimation_started:
-                if int(current_time - previous_time) >= 120:             # wait for 2 minutes to be stable
+                if int(current_time - previous_time) >= 180:             # wait for 3 minutes to be stable
                     estimation_started = True
                     previous_time = current_time
+                    initial_time = current_time
+                    initial_temp = current_temp
             else:
                 if not measurement_started:
                     if current_temp > previous_temp:                    # Start measurement at the timing of temparature increase
@@ -83,10 +85,13 @@ def set_temp(message, set_temp):
                         if current_temp > previous_temp:   # Waiting for temparature increase timing
                             previous_time = current_time
                             measurement_started = False
-                            average_increment = (current_temp - start_temp) * 60 / (current_time - start_time)  # increment for 1 minute
-##                            print "[{}] Average updated: {} - {} -> {} degree increment in {} seconds".format(time.strftime('%H:%M:%S'), average_increment, start_temp, current_temp, int(current_time - start_time))
-                if average_increment > 0:            # eastimete if average increase is positive
-                    finish_in_minutes = (float(target_temp) - current_temp) / average_increment
+                            average_increment_lap = (current_temp - start_temp) * 60 / (current_time - start_time)  # increment for 1 minute for this lap
+                            average_increment_total = (current_temp - initial_temp) * 60 / (current_time - initial_time)    # increment for 1 minutes from estimation start time
+                            average = (average_increment_lap + average_increment_total)/2
+                            print "[{}] Lap average: {} - {} -> {} degree increment in {} seconds".format(time.strftime('%H:%M:%S'), average_increment_lap, start_temp, current_temp, int(current_time - start_time))
+                            print "Total average: {} New average {}".format(average_increment_total, average)
+                if average > 0:            # eastimete if average increase is positive
+                    finish_in_minutes = (float(target_temp) - current_temp) / average
                     if finish_in_minutes < 5.0:
                         estimate_message(0, current_temp, message)
                     elif finish_in_minutes < 10.0:
