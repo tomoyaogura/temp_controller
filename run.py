@@ -7,7 +7,7 @@ import Remote_Outlet.control
 from slackbot.bot import Bot, respond_to, default_reply
 from temp_reader import read_device_file
 from camera_control import camera_capture
-from Remote_Outlet.control import turn_on, turn_off
+from Remote_Outlet.control import turn_on, turn_off, random_on_off
 
 monitor_flag = False            # Monitoring or not
 new_interval = False            # When monitor command is entered it turned to True
@@ -21,7 +21,6 @@ target_temp = 0.0               # Keeps the target temparature for bathtub
 fire_warning = 70               # Threshold to judge fire when monitoring home
 heater_1_outlet_number = "4"
 heater_2_outlet_number = "5"
-
 
 fire_alarm = "119"              # Sound number for fire alarm
 theft_alarm = "110"             # Sound number for theft alarm
@@ -128,6 +127,10 @@ def outlet_on(message, switch_id):
 @respond_to("off (\d+)", re.IGNORECASE)
 def outlet_off(message, switch_id):
     message.reply(turn_off(switch_id))
+
+@respond_to("random (\d+)", re.IGNORECASE)
+def outlet_random(message, switch_id):
+    message.reply(random_on_off(switch_id))
 
 @respond_to("view", re.IGNORECASE)
 def return_capture(message):

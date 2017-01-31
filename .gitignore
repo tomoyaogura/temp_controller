@@ -1,4 +1,4 @@
 slackbot_settings.py
 *.py[cod]
-Remote_Outlet/*
+Remote_Outlet/config.py
 image.jpg

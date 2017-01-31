@@ -4,5 +4,6 @@
 "List" shows sound list
 "Lang (E or J)" sets language preference for sound messages
 "On X" & "Off X" turns on/off outlet number X
+"Random X" turns on/off outlet number X repeatedly
 "View" shows camera image
 "Monitor XX" monitors home security in XX minutes interval, 0 to cancel
