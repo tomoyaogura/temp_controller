@@ -7,6 +7,7 @@ import Remote_Outlet.control
 from slackbot.bot import Bot, respond_to, default_reply
 from temp_reader import read_device_file
 from camera_control import camera_capture
+from display import Temp_Display
 from Remote_Outlet.control import turn_on, turn_off, random_on_off
 
 monitor_flag = False            # Monitoring or not
@@ -30,6 +31,8 @@ estimate_message_sound = ["800", "801", "802", "803"]
 estimate_message_minutes = ["5", "10", "15", "20"]
 skip_first_message = True       # First estimation message could be unrelyable
 
+display = Temp_Display(3)
+
 @respond_to("hi", re.IGNORECASE)
 def hi(message):
     message.reply('Hello world')
@@ -43,7 +46,9 @@ def set_temp(message, set_temp):
     global set_flag
     global target_temp
     global skip_first_message
-    
+
+    display.set_temp(float(set_temp))
+
     estimation_started = False
     measurement_started = False
     target_temp = set_temp
@@ -56,10 +61,7 @@ def set_temp(message, set_temp):
         message.reply("O.K., I'll let you know when the temparature reaches to {} degrees".format(target_temp))
         previous_time = time.time()
         current_temp = read_device_file()
-        if int(target_temp) - int(current_temp) < 15:      # Less than 30 minutes expected -> Short average period
-            average_period = 5
-        else:
-            average_period = 10
+        average_period = 5
         while True:
             previous_temp = current_temp
             time.sleep(measurement_interval)
@@ -107,6 +109,7 @@ def set_temp(message, set_temp):
         sound_player.play_bath_sound()
         turn_off(heater_1_outlet_number)
         turn_off(heater_2_outlet_number)
+        display.unset_temp()
 
 @respond_to("play (\d+)", re.IGNORECASE)
 def sound_play(message, mp3_id):
