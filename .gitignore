@@ -2,3 +2,4 @@ slackbot_settings.py
 *.py[cod]
 Remote_Outlet/config.py
 image.jpg
+nohup.out
