@@ -11,7 +11,7 @@ app = Flask(__name__)
 bath_temperature = [{'time': 'N/A', 'temp': 0.0}] * 25 
 
 def update_data():
-    threading.Timer(60.0, update_data).start()
+    threading.Timer(600.0, update_data).start()
     bath_temperature.pop(0)
     bath_temperature.append({'time': time.strftime('%H:%M'),
                              'temp': read_device_file()})
