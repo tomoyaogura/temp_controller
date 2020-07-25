@@ -5,5 +5,7 @@
 "Lang (E or J)" sets language preference for sound messages
 "On X" & "Off X" turns on/off outlet number X
 "Random X" turns on/off outlet number X repeatedly
+"Solar X" turns on/off outlet number X periodically for solar water heating
+"Solart X" solar mode with temparature monitoring
 "View" shows camera image
 "Monitor XX" monitors home security in XX minutes interval, 0 to cancel

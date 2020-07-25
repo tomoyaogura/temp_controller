@@ -78,7 +78,15 @@ def outlet_off(message, switch_id):
 
 @respond_to("random (\d+)", re.IGNORECASE)
 def outlet_random(message, switch_id):
-    message.reply(random_on_off(switch_id))
+    message.reply(random_on_off(switch_id, 0))
+
+@respond_to("solar (\d+)", re.IGNORECASE)
+def outlet_solar(message, switch_id):
+    message.reply(random_on_off(switch_id, 1))
+
+@respond_to("solart (\d+)", re.IGNORECASE)
+def outlet_solar(message, switch_id):
+    message.reply(random_on_off(switch_id, 2))
 
 @respond_to("view", re.IGNORECASE)
 def return_capture(message):
@@ -92,6 +100,7 @@ def monitor_home(message, interval):
     global new_interval
 
     new_interval = True
+
     monitor_interval = int(interval)
 
     if(not monitor_flag):

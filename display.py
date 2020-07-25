@@ -1,7 +1,7 @@
 import time
 import threading
 import sound_player
-from Remote_Outlet.control import turn_on, turn_off
+from Remote_Outlet.control import turn_on, turn_off, is_random
 
 from Adafruit_LED_Backpack import SevenSegment
 import RPi.GPIO as GPIO
@@ -127,7 +127,12 @@ class Temp_Monitor():
                 if(self.loop_counter % 2 == 0):
                     self.display_time()
                 else:
-                    self.display_temp()
+                    if(is_random()):
+                        GPIO.output(LED_PIN, GPIO.HIGH)
+                        self.display_temp()
+                        GPIO.output(LED_PIN, GPIO.LOW)
+                    else:
+                        self.display_temp()
                 self.loop_counter = self.loop_counter + 1
                 time.sleep(self.display_duration)
    
