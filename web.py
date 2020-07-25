@@ -6,9 +6,11 @@ from flask import Flask
 from temp_reader import read_device_file
 from pygal.style import NeonStyle
 
+from Remote_Outlet.control import turn_off, turn_on
+
 app = Flask(__name__)
 
-bath_temperature = [{'time': 'N/A', 'temp': 0.0}] * 25 
+bath_temperature = [{'time': 'N/A', 'temp': 0.0}] * 25
 
 def update_data():
     threading.Timer(600.0, update_data).start()
@@ -42,6 +44,15 @@ def graph():
         </html>
         """ % (title, str(read_device_file()), bar_chart.render())
     return html
+
+
+@app.route('/turn_off/<outlet_id>')
+def turn_off_web(outlet_id):
+    turn_off(outlet_id)
+
+@app.route('/turn_on/<outlet_id>')
+def turn_on_web(outlet_id):
+    turn_on(outlet_id)
 
 if __name__ == '__main__':
     update_data()
