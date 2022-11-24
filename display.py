@@ -47,8 +47,8 @@ class Temp_Monitor():
 
     def start_monitoring(self):
         while True:
-            if(self.previous_target <> self.target_temp):
-                if(self.target_temp <> 0.0):
+            if(self.previous_target != self.target_temp):
+                if(self.target_temp != 0.0):
                     self.respond("Now target temparature is set to {} degrees".format(self.target_temp))
                 else:
                     self.respond("Temparature monitoring stopped")
@@ -99,8 +99,8 @@ class Temp_Monitor():
                                     average_increment_lap = (current_temp - start_temp) * 60 / (current_time - initial_time)
                                     average_increment_total = (current_temp - initial_temp) * 60 / (current_time - initial_time)    # increment for 1 minutes from estimation start time
                                     average = (average_increment_lap + average_increment_total)/2
-                                    print "[{}] Lap average: {} - {} -> {} degree increment in {} seconds".format(time.strftime('%H:%M:%S'), average_increment_lap, start_temp, current_temp, int(current_time - start_time))
-                                    print "Total average: {} New average {}".format(average_increment_total, average)
+                                    print("[{}] Lap average: {} - {} -> {} degree increment in {} seconds".format(time.strftime('%H:%M:%S'), average_increment_lap, start_temp, current_temp, int(current_time - start_time)))
+                                    print("Total average: {} New average {}".format(average_increment_total, average))
                         if average > 0.0:            # eastimete if average increase is positive
                             self.finish_in_minutes = (float(self.target_temp) - current_temp) / average
                             if self.finish_in_minutes < 5.0:
@@ -113,7 +113,7 @@ class Temp_Monitor():
                                 self.estimate_message(3, current_temp)
                             else:
                                 self.skip_first_message = False
-                if(self.target_temp <> 0):
+                if(self.target_temp != 0):
                     self.respond("[{}] The temparature reached to {} degrees".format(time.strftime('%H:%M:%S'), self.target_temp))
                 self.is_heating = False
                 self.finish_in_minutes = 0.0

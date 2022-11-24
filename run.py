@@ -26,7 +26,7 @@ MAX_TEMP = 45.0
 temp_monitor = Temp_Monitor()
 
 def set_button(channel):
-    print "Button is pressed"
+    print("Button is pressed")
     if temp_monitor.is_heating:
         if (temp_monitor.target_temp >= MAX_TEMP):
             temp_monitor.target_temp = 0.0

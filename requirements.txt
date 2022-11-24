@@ -4,7 +4,7 @@ itsdangerous==0.24
 Jinja2==2.8.1
 MarkupSafe==0.23
 pygal==2.3.1
-pygame==1.9.2
+pygame==1.9.6
 requests==2.12.4
 six==1.10.0
 slackbot==0.4.1

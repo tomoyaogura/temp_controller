@@ -1,5 +1,5 @@
 import subprocess
-import config
+from Remote_Outlet import config
 import time
 import random
 
@@ -67,7 +67,7 @@ def random_on_off(outlet_id, mode):
                             _send_pulse(config.CODES[outlet_id][0])
                             outlet_status[status_index] = 3     # change status to random on
                             start_temp = read_device_file()
-                            print "[{}] Pump starting at {} degrees".format(time.strftime('%H:%M'), start_temp)
+                            print("[{}] Pump starting at {} degrees".format(time.strftime('%H:%M'), start_temp))
                 else:
                     if(random_mode[status_index] == 0):
                         trigger_seconds = random.randint(off_min, off_max) * 60
@@ -76,18 +76,18 @@ def random_on_off(outlet_id, mode):
                         if(random_mode[status_index] == 2):          # solar with temparature monitoring
                             end_temp = read_device_file()
                             temp_gain = end_temp - start_temp
-                            print "[{}] {} --> {} Temparature gain is {}".format(time.strftime('%H:%M'), start_temp, end_temp, temp_gain)
+                            print("[{}] {} --> {} Temparature gain is {}".format(time.strftime('%H:%M'), start_temp, end_temp, temp_gain))
                             if(temp_gain < 0):     # temparature gain is negative -> exit solar mode 
-                                print "No temparature gain -> exit solar mode"
+                                print("No temparature gain -> exit solar mode")
                                 outlet_status[status_index] = 0
                                 _send_pulse(config.CODES[outlet_id][1])
                                 break
                             if(temp_gain < temp_threshold1):       # Very little temparature gain -> 3 X the wait time
                                 trigger_seconds = solar_wait * 3
-                                print "Very little temparature gain -> 3 X the wait time"
+                                print("Very little temparature gain -> 3 X the wait time")
                             elif(temp_gain < temp_threshold2):     # Not enough temprature gain -> 2X the wait time
                                 trigger_seconds = solar_wait * 2
-                                print "Not enough tempararture gain -> 2 X wait time"
+                                print("Not enough tempararture gain -> 2 X wait time")
                     outlet_status[status_index] = 2
                     _send_pulse(config.CODES[outlet_id][1])
                 previous_time = current_time
